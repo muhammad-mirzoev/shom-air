@@ -1,0 +1,40 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Профиль пользователя{% endblock %}
+
+{% block content %}
+<div class="glass-container">
+    <div class="profile-header">
+        <a href="/" class="back-link">← Назад</a>
+        <h1 class="logo">ПРОФИЛЬ</h1>
+    </div>
+
+    <div class="user-card">
+        <div class="avatar-circle">
+            {{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}
+        </div>
+        <h2 class="user-name">{{ request.user.first_name }} {{ request.user.last_name }}</h2>
+        <p class="user-email">{{ request.user.email }}</p>
+    </div>
+
+    <div class="profile-details">
+        <div class="detail-item">
+            <span>Страна:</span>
+            <strong>{{ request.user.country|default:"Не указана" }}</strong>
+        </div>
+        
+        <button class="main-btn btn-edit" 
+                hx-get="{% url 'users:edit_account_details' %}" 
+                hx-target="#account-details-content" 
+                hx-swap="innerHTML">
+            Изменить данные
+        </button>
+        
+        <div id="account-details-content"></div>
+    </div>
+
+    <div class="profile-actions">
+        <a href="{% url 'users:logout' %}" class="logout-link">Выйти из системы</a>
+    </div>
+</div>
+{% endblock %}
