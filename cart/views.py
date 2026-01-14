@@ -15,7 +15,7 @@ def cart_add(request, product_id):
     if form.is_valid():
         cd = form.cleaned_data
 
-        size = cd.get('size')
+        size = int(cd.get('size'))
         if not size:
             messages.error(request, 'Выберите размер пары!')
             return redirect(product.get_absolute_url())
