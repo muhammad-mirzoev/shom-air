@@ -1,0 +1,179 @@
+{% load static %}
+
+<main class="checkout-wrapper py-8">
+    <div class="max-w-7xl mx-auto px-4">
+        
+        <div class="checkout-grid">
+            <div class="checkout-form-column">
+                <form method="post" id="order-form" hx-post="{% url 'orders:checkout' %}" hx-target="#main-content" hx-swap="outerHTML">
+                    {% csrf_token %}
+                    
+                    <div class="checkout-section">
+                        <h2 class="section-title">Контактная информация</h2>
+                        <div class="form-group">
+                            <label for="{{ form.email.id_for_label }}">Адрес электронной почты</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}<div class="error-msg">{{ form.email.errors }}</div>{% endif %}
+                        </div>
+                        <label class="checkbox-container mt-3">
+                            <input type="checkbox" name="newsletter">
+                            <span class="checkmark"></span>
+                            <span class="label-text">Присылайте мне новости и предложения.</span>
+                        </label>
+                    </div>
+
+                    <div class="checkout-section">
+                        <h2 class="section-title">Адрес доставки</h2>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="{{ form.first_name.id_for_label }}">Имя</label>
+                                {{ form.first_name }}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.last_name.id_for_label }}">Фалимия</label>
+                                {{ form.last_name }}
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label for="{{ form.country.id_for_label }}">Страна/Регион</label>
+                            {{ form.country }}
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label for="{{ form.address1.id_for_label }}">Адрес</label>
+                            {{ form.address1 }}
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label for="{{ form.address2.id_for_label }}">Адрес 2 (по желанию)</label>
+                            {{ form.address2 }}
+                        </div>
+
+                        <div class="grid-3 mt-3">
+                            <div class="form-group">
+                                <label for="{{ form.city.id_for_label }}">Город</label>
+                                {{ form.city }}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.province.id_for_label }}">Провинция</label>
+                                {{ form.province }}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.postal_code.id_for_label }}">Почтовый индекс</label>
+                                {{ form.postal_code }}
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label for="{{ form.phone.id_for_label }}">Номер телефона</label>
+                            {{ form.phone }}
+                        </div>
+
+                        <label class="checkbox-container mt-4">
+                            <input type="checkbox" name="save_info">
+                            <span class="checkmark"></span>
+                            <span class="label-text">Сохраните эту информацию для следующего раза.</span>
+                        </label>
+                    </div>
+
+                    <div class="payment-grid mt-4">
+                        <button type="submit" name="create_order" value="create_order" class="btn-pay stripe" onclick="document.getElementById('payment_provider').value='stripe'">
+                            Оплата
+                        </button>
+                        <input type="hidden" name="payment_provider" id="payment_provider">
+                    </div>
+                </form>
+            </div>
+
+            <div class="checkout-summary-column">
+                <div class="summary-card sticky-top">
+                    <h2 class="section-title">Информация товара</h2>
+                    <div class="summary-items">
+                        {% for item in cart_items %}
+                        <div class="summary-item">
+                            <div class="item-img-wrapper">
+                                <img src="{{ item.product.main_image.url }}" alt="{{ item.product.name }}">
+                                <span class="item-qty-badge">{{ item.quantity }}</span>
+                            </div>
+                            <div class="item-info">
+                                <span class="item-name">{{ item.product.name }}</span>
+                                <span class="item-size">{{ item.product_size.size.name }}</span>
+                            </div>
+                            <div class="item-price">₽{{ item.product.price|floatformat:2 }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="summary-totals mt-4">
+                        <div class="total-row">
+                            <span>Итого</span>
+                            <span>₽{{ total_price|floatformat:2 }}</span>
+                        </div>
+                        <div class="total-row">
+                            <span>Доставка</span>
+                            <span class="muted">Будет рассчитана позже</span>
+                        </div>
+                        <div class="total-row grand-total">
+                            <span>Общая сумма</span>
+                            <div class="price-box">
+                                <small>Руб</small>
+                                <span>₽{{ total_price|floatformat:2 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const paymentButtons = document.querySelectorAll('.payment-button');
+        const paymentProviderInput = document.getElementById('payment_provider');
+        const form = document.getElementById('order-form');
+
+        paymentButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                const provider = this.getAttribute('data-payment-provider') || this.getAttribute('onclick').match(/'([^']+)'/)[1];
+                paymentProviderInput.value = provider;
+                console.log('Payment provider set to:', provider);
+            });
+        });
+
+        form.addEventListener('submit', function(e) {
+            console.log('Form submitting with payment provider:', paymentProviderInput.value);
+
+            // Проверка обязательных полей
+            const requiredFields = ['email', 'first_name', 'last_name', 'address1', 'city', 'country', 'phone'];
+            let isValid = true;
+
+            requiredFields.forEach(fieldName => {
+                const field = document.querySelector(`[name="${fieldName}"]`);
+                if (field && !field.value.trim()) {
+                    console.error(`Required field ${fieldName} is empty`);
+                    isValid = false;
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please fill in all required fields');
+                return false;
+            }
+
+            // Проверка значения payment_provider
+            if (!['stripe', 'heleket'].includes(paymentProviderInput.value)) {
+                e.preventDefault();
+                console.error('Invalid payment provider:', paymentProviderInput.value);
+                alert('Please select a valid payment provider');
+                return false;
+            }
+        });
+
+        form.addEventListener('htmx:beforeRequest', function(e) {
+            console.log('HTMX request starting with payment provider:', paymentProviderInput.value);
+        });
+    });
+</script>

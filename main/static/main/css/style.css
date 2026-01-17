@@ -442,18 +442,21 @@ select:focus {
 
 .size-btn {
     padding: 10px;
-    background: #1b202e;
-    border: 1px solid #333;
-    color: #fff;
+    background: #171b2b;          /* совпадает с фоном карточки товаров */
+    border: 1px solid #2a2f45;    /* тонкая рамка, как у таблиц */
+    color: #ffffff;                /* белый текст */
     border-radius: 8px;
     cursor: pointer;
+    transition: background 0.3s, border-color 0.3s;
 }
 
 .size-btn.active,
 .size-btn:hover {
-    background: #a300e0;
-    border-color: #a300e0;
+    background: #6a0572;           /* основной фиолетовый акцент */
+    border-color: #a300e0;         /* светящийся фиолетовый, как glow */
+    color: #ffffff;                /* текст остаётся белым */
 }
+
 
 /* Специфические цвета для кнопок действий */
 .btn-logout {
@@ -747,6 +750,288 @@ select:focus {
 .button-container button[type="button"] {
     background: #333;
     color: white;
+}
+
+/* ================= CHECKOUT REFINED STYLE ================= */
+
+/* Общий контейнер для страницы оплаты */
+.max-w-7xl {
+    max-width: 1200px !important;
+    margin: 0 auto;
+}
+
+/* Сетка чекаута: выравниваем колонки по высоте */
+.grid.lg-grid-cols-2 {
+    display: grid;
+    grid-template-columns: 1fr 400px; /* Фиксированная ширина для сводки */
+    gap: 30px;
+    align-items: start;
+}
+
+/* Унификация всех блоков (карточек) на странице */
+.bg-white.p-6 {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius) !important;
+    padding: 30px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    margin-bottom: 25px !important;
+}
+
+/* Заголовки секций: ровные и четкие */
+.bg-white.p-6 h2 {
+    color: var(--text-main) !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 20px !important;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block; /* Линия только под текстом */
+}
+
+/* Поля ввода: одинаковая высота и выравнивание */
+.bg-white.p-6 input[type="text"],
+.bg-white.p-6 input[type="email"],
+.bg-white.p-6 input[type="tel"],
+.bg-white.p-6 select {
+    height: 50px !important;
+    background-color: #0b0e18 !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text-main) !important;
+    border-radius: 12px !important;
+    padding: 0 15px !important;
+    width: 100% !important;
+    margin-top: 5px !important;
+    font-family: inherit;
+}
+
+/* МАКСИМАЛЬНО ЖЕСТКИЙ ФИКС БЕЛОГО ТЕКСТА */
+
+/* 1. Основной цвет текста в полях — БЕЛЫЙ (когда ты начал писать) */
+input, select, textarea {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+/* 2. Цвет ПОДСКАЗКИ (Placeholder) — СЕРЫЙ (пока ячейка пустая) */
+input::placeholder, 
+textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important; /* Серый цвет */
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.4) !important;
+    opacity: 1 !important;
+}
+
+/* Для браузеров Internet Explorer и старых Edge */
+input:-ms-input-placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 3. ОСОБЕННОСТЬ ДЛЯ SELECT (Выпадающий список стран) */
+/* Так как в select нет плейсхолдера, мы красим его в серый, 
+   пока не выбрано значение (если первый option пустой или 'Select Country') */
+select:invalid,
+select[value=""] {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Как только выбрали страну — текст станет белым */
+select option {
+    color: #ffffff !important;
+    background-color: #0b0e18 !important;
+}
+
+/* Группировка полей в сетку 50/50, чтобы не было "лесенки" */
+.grid.grid-cols-2, .grid.grid-cols-3 {
+    gap: 20px !important;
+}
+
+/* Сводка заказа (Правая колонка) */
+.h-fit {
+    position: sticky;
+    top: 20px; /* Прилипает при скролле */
+}
+
+.cart-items-summary {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* Миниатюры товаров в сводке */
+.w-16.h-16 {
+    width: 70px !important;
+    height: 70px !important;
+    border-radius: 10px !important;
+    border: 1px solid var(--border);
+    object-fit: cover;
+    background: #0f121d;
+}
+
+/* Бейдж количества товара на картинке */
+.absolute.-top-2.-right-2 {
+    background: var(--accent-glow) !important;
+    border: 2px solid var(--bg-card);
+    font-weight: 700;
+}
+
+/* Итоговые цифры */
+#order-summary {
+    border-top: 1px dashed var(--border) !important;
+    margin-top: 20px;
+}
+
+.text-lg.font-medium {
+    font-size: 1.4rem !important;
+    color: var(--accent-glow) !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Кнопки выбора оплаты (Равномерные) */
+.payment-button {
+    height: 60px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px;
+    background: #1c2135 !important;
+    border: 1px solid var(--border) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.payment-button:hover {
+    background: var(--accent-glow) !important;
+    box-shadow: 0 0 20px rgba(163, 0, 224, 0.4) !important;
+    transform: translateY(-3px);
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 1024px) {
+    .grid.lg-grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+    
+    .h-fit {
+        position: relative;
+        top: 0;
+    }
+}
+
+/* Пустая корзина - центрирование */
+.text-center.py-20 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+/* Layout fixes */
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 40px;
+    align-items: start;
+}
+
+.checkout-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 30px;
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+    color: var(--text-main);
+    border-left: 4px solid var(--accent-glow);
+    padding-left: 15px;
+}
+
+/* Form Fields */
+.form-group label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+
+/* Items in Summary */
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.item-img-wrapper {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    background: #0b0e18;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.item-img-wrapper img {
+    width: 100%; height: 100%; object-fit: contain; padding: 5px;
+}
+
+.item-qty-badge {
+    position: absolute;
+    top: -8px; right: -8px;
+    background: var(--accent-glow);
+    color: white;
+    font-size: 0.7rem;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold;
+}
+
+/* Payment Buttons */
+.payment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.btn-pay {
+    padding: 18px;
+    border-radius: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid var(--border);
+    background: #1c2033;
+    color: white;
+}
+
+.btn-pay:hover {
+    background: var(--accent-glow);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(163, 0, 224, 0.3);
+}
+
+/* Grand Total Area */
+.grand-total {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px solid var(--border);
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--text-main);
 }
 
 /* ================= ADAPTIVE ================= */

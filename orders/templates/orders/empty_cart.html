@@ -1,0 +1,30 @@
+<main class="container">
+    <div class="empty-cart-card">
+        <div class="empty-icon">🛒</div>
+        <h3 class="page-title">{{ message|upper }}</h3>
+        <p class="text-muted mb-4">Your basket is currently empty. Explore our latest drops!</p>
+        <a href="{% url 'main:index' %}" 
+           hx-get="{% url 'main:index' %}" 
+           hx-target="#main-content" 
+           hx-push-url="true"
+           class="btn btn-primary">
+            GO TO SHOP
+        </a>
+    </div>
+</main>
+
+<style>
+.empty-cart-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 100px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-top: 50px;
+}
+.empty-icon { font-size: 4rem; margin-bottom: 20px; opacity: 0.5; }
+</style>

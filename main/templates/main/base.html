@@ -31,6 +31,13 @@
                     {% endfor %}
                 </ul>
                 <div class="d-flex align-items-center">
+                    {% if request.user.is_staff %}
+                        <a href="{% url 'admin:main_productsize_changelist' %}?product__id__exact={{ product.id }}" class="btn btn-outline-light me-3">
+                        <span>Админка</span> 
+                        </a>
+                    {% endif %}
+
+
                     <a href="/users/profile" class="btn btn-outline-light me-3">
                         <i class="bi bi-person-circle"></i> 
                         <span class="ms-1 d-none d-md-inline">Профиль</span>

@@ -7,14 +7,14 @@ class OrderForm(forms.Form):
         max_length=50,
         widget=forms.TextInput(attrs={
             'class': 'w-full px-4 py-3 border border-black rounded-none text-black placeholder-gray-500 focus:outline-none focus:border-black',
-            'placeholder': 'First Name'
+            'placeholder': 'Имя'
         })
     )
     last_name = forms.CharField(
         max_length=50,
         widget=forms.TextInput(attrs={
             'class': 'w-full px-4 py-3 border border-black rounded-none text-black placeholder-gray-500 focus:outline-none focus:border-black',
-            'placeholder': 'Last Name'
+            'placeholder': 'Фамилия'
         })
     )
     email = forms.EmailField(
@@ -29,7 +29,7 @@ class OrderForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'w-full px-4 py-3 border border-black rounded-none text-black placeholder-gray-500 focus:outline-none focus:border-black',
-            'placeholder': 'Company (optional)'
+            'placeholder': 'Компания (необязательно)'
         })
     )
     address1 = forms.CharField(
@@ -37,7 +37,7 @@ class OrderForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'w-full px-4 py-3 border border-black rounded-none text-black placeholder-gray-500 focus:outline-none focus:border-black pr-10',
-            'placeholder': 'Address Line 1'
+            'placeholder': 'Адрес'
         })
     )
     address2 = forms.CharField(
@@ -45,7 +45,7 @@ class OrderForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'w-full px-4 py-3 border border-black rounded-none text-black placeholder-gray-500 focus:outline-none focus:border-black',
-            'placeholder': 'Address Line 2 (optional)'
+            'placeholder': 'Адрес 2'
         })
     )
     city = forms.CharField(
@@ -53,7 +53,7 @@ class OrderForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'w-full px-4 py-3 border border-black rounded-none text-black placeholder-gray-500 focus:outline-none focus:border-black',
-            'placeholder': 'City'
+            'placeholder': 'Город'
         })
     )
     country = forms.CharField(
@@ -61,7 +61,7 @@ class OrderForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'w-full px-4 py-3 border border-black rounded-none text-black placeholder-gray-500 focus:outline-none focus:border-black',
-            'placeholder': 'Country'
+            'placeholder': 'Страна'
         })
     )
     province = forms.CharField(
@@ -69,7 +69,7 @@ class OrderForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'w-full px-4 py-3 border border-black rounded-none text-black placeholder-gray-500 focus:outline-none focus:border-black',
-            'placeholder': 'State/Province'
+            'placeholder': 'Провинция'
         })
     )
     postal_code = forms.CharField(
@@ -77,7 +77,7 @@ class OrderForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'w-full px-4 py-3 border border-black rounded-none text-black placeholder-gray-500 focus:outline-none focus:border-black',
-            'placeholder': 'Postal Code'
+            'placeholder': 'Почтовый индекс'
         })
     )
     phone = forms.CharField(
@@ -85,24 +85,24 @@ class OrderForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'w-full px-4 py-3 border border-black rounded-none text-black placeholder-gray-500 focus:outline-none focus:border-black pr-10',
-            'placeholder': 'Phone (optional)'
+            'placeholder': 'Телефон (Обязательно)'
         })
     )
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         if user:
-            self.fields['first_name'].initial = user.first_name
-            self.fields['last_name'].initial = user.last_name
-            self.fields['email'].initial = user.email
-            self.fields['company'].initial = user.company
-            self.fields['address1'].initial = user.address1
-            self.fields['address2'].initial = user.address2
-            self.fields['city'].initial = user.city
-            self.fields['country'].initial = user.country
-            self.fields['province'].initial = user.province
-            self.fields['postal_code'].initial = user.postal_code
-            self.fields['phone'].initial = user.phone
+            self.fields['first_name'].initial = getattr(user, 'first_name', '')
+            self.fields['last_name'].initial = getattr(user, 'last_name', '')
+            self.fields['email'].initial = getattr(user, 'email', '')
+            self.fields['company'].initial = getattr(user, 'company', '')
+            self.fields['address1'].initial = getattr(user, 'address1', '')
+            self.fields['address2'].initial = getattr(user, 'address2', '')
+            self.fields['city'].initial = getattr(user, 'city', '')
+            self.fields['country'].initial = getattr(user, 'country', '')
+            self.fields['province'].initial = getattr(user, 'province', '')
+            self.fields['postal_code'].initial = getattr(user, 'postal_code', '')
+            self.fields['phone'].initial = getattr(user, 'phone', '')
 
     def clean(self):
         cleaned_data = super().clean()
