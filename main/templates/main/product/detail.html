@@ -30,30 +30,30 @@
             <div class="mt-4">
                 <form method="post" action="{% url 'cart:cart_add' product.id %}" id="add-to-cart-form">
                     {% csrf_token %}
-
+            
                     <!-- СКРЫТОЕ ПОЛЕ РАЗМЕРА -->
                     <input type="hidden" name="size" id="selected-size">
-
+            
                     <h5 class="mt-3">Выберите размер пары (EU)</h5>
-
+            
                     <div class="size-grid mt-2">
-                        <button type="button" class="size-btn" data-size="39">38</button>
-                        <button type="button" class="size-btn" data-size="39">39</button>
-                        <button type="button" class="size-btn" data-size="40">40</button>
-                        <button type="button" class="size-btn" data-size="41">41</button>
-                        <button type="button" class="size-btn" data-size="42">42</button>
-                        <button type="button" class="size-btn" data-size="43">43</button>
-                        <button type="button" class="size-btn" data-size="44">44</button>
+                        {% for ps in sizes %}
+                            <button type="button" class="size-btn" data-size="{{ ps.id }}">
+                                {{ ps.size.name }}
+                            </button>
+                        {% endfor %}
                     </div>
-
+            
+                    <!-- ===== Добавляем надпись над количеством пар ===== -->
+                    <p class="mt-3 mb-1"><strong>Количество пар</strong></p>
                     {{ cart_product_form.quantity }}
                     {{ cart_product_form.override }}
-
+            
                     <button type="submit" class="btn btn-primary btn-lg mt-4">
                         Добавить в корзину
                     </button>
                 </form>
-            </div>
+            </div>            
         </div>
     </div>
 
@@ -82,5 +82,22 @@
 </div>
 
 <!-- JS -->
-<script src="{% static 'main/js/size-select.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sizeButtons = document.querySelectorAll('.size-btn');
+    const selectedSizeInput = document.getElementById('selected-size');
+
+    sizeButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Снять выделение со всех кнопок
+            sizeButtons.forEach(b => b.classList.remove('active'));
+            // Выделить текущую кнопку
+            this.classList.add('active');
+            // Установить выбранный размер в скрытое поле
+            selectedSizeInput.value = this.dataset.size;
+        });
+    });
+});
+</script>
+
 {% endblock %}

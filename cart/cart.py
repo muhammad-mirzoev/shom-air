@@ -1,5 +1,5 @@
 from django.conf import settings
-from main.models import Product
+from main.models import Product, ProductSize
 
 
 class Cart:
@@ -35,6 +35,19 @@ class Cart:
         cart = self.cart.copy()
         for product in products:
             cart[str(product.id)]['product'] = product
+            # Добавляем объект ProductSize
+            size_id = cart[str(product.id)].get('size')
+            if size_id:
+                try:
+                    product_size = ProductSize.objects.get(id=size_id)
+                    cart[str(product.id)]['size_obj'] = product_size
+                    cart[str(product.id)]['size_name'] = product_size.size.name
+                except ProductSize.DoesNotExist:
+                    cart[str(product.id)]['size_obj'] = None
+                    cart[str(product.id)]['size_name'] = 'Не выбран'
+            else:
+                cart[str(product.id)]['size_obj'] = None
+                cart[str(product.id)]['size_name'] = 'Не выбран'
         for item in cart.values():
             item['price'] = float(item['price'])
             item['total_price'] = item['price'] * item['quantity']

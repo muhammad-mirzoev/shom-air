@@ -10,7 +10,7 @@ from .models import Order, OrderItem
 from cart.cart import Cart
 from main.models import ProductSize
 from django.shortcuts import get_object_or_404
-from payment.views import create_stripe_checkout_session, create_heleket_payment
+from payment.views import create_stripe_checkout_session
 import logging
 
 logger = logging.getLogger(__name__)
@@ -95,26 +95,19 @@ class CheckoutView(View):
         # ---- СОЗДАЁМ OrderItem ----
         for item in cart:
             product_size = get_object_or_404(ProductSize, id=item['size'])
-
-        OrderItem.objects.create(
-            order=order,
-            product=item['product'],
-            size=product_size,
-            quantity=item['quantity'],
-            price=item['price'],
-        )
+            OrderItem.objects.create(
+                order=order,
+                product=item['product'],
+                size=product_size,
+                quantity=item['quantity'],
+                price=item['price'],
+            )
 
         # ---- ОПЛАТА ----
         try:
             if payment_provider == 'stripe':
                 session = create_stripe_checkout_session(order, request)
-                cart.clear()
                 return redirect(session.url)
-
-            if payment_provider == 'heleket':
-                payment = create_heleket_payment(order, request)
-                cart.clear()
-                return redirect(payment['url'])
 
         except Exception as e:
             order.delete()

@@ -1,20 +1,24 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     const sizeButtons = document.querySelectorAll('.size-btn');
-    const sizeInput = document.getElementById('selected-size');
-    const form = document.getElementById('add-to-cart-form');
+    const selectedSizeInput = document.getElementById('selected-size');
 
-    sizeButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            sizeButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            sizeInput.value = button.dataset.size;
+    sizeButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            selectedSizeInput.value = this.getAttribute('data-size');
+
+            // Визуальное выделение выбранного размера
+            sizeButtons.forEach(b => b.classList.remove('selected'));
+            this.classList.add('selected');
         });
     });
 
-    form.addEventListener('submit', (e) => {
-        if (!sizeInput.value) {
+    // Проверка перед отправкой формы
+    const form = document.getElementById('add-to-cart-form');
+    form.addEventListener('submit', function(e) {
+        if (!selectedSizeInput.value) {
             e.preventDefault();
-            alert('Пожалуйста, выберите размер обуви');
+            alert('Пожалуйста, выберите размер');
         }
     });
 });
+

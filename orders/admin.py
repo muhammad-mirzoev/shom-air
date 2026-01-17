@@ -6,23 +6,27 @@ from .models import Order, OrderItem
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
-    fields = ('image_preview', 'product', 'size', 'quantity',
+    fields = ('image_preview', 'product', 'size_name', 'quantity',
               'price', 'get_total_price')
-    readonly_fields = ('image_preview', 'get_total_price')
+    readonly_fields = ('image_preview', 'size_name', 'get_total_price')
     can_delete = False
 
     def image_preview(self, obj):
-        if obj.product.main_image:
-            return mark_safe(f'<img src="{obj.product.main_image.url}" style="max-height: 100px; "max-width: 100px; object-fit: cover;" />')
-        return mark_safe('<span style="color: gray;"> No Image</span>')
-    image_preview.short_description = 'Image'
+        if obj.product.image:
+            return mark_safe(f'<img src="{obj.product.image.url}" style="max-height:100px; max-width:100px; object-fit:cover;" />')
+        return mark_safe('<span style="color: gray;">No Image</span>')
+    image_preview.short_description = 'Изображение'
+
+    def size_name(self, obj):
+        return obj.size.size.name
+    size_name.short_description = 'Размер'
 
     def get_total_price(self, obj):
         try:
             return obj.get_total_price()
         except TypeError:
             return mark_safe('<span style="color: red;">Invalid Data</span>')
-    get_total_price.short_description = 'Total Price'
+    get_total_price.short_description = 'Итого'
 
 
 @admin.register(Order)
@@ -30,23 +34,23 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'email',
                     'total_price', 'payment_provider',
                     'status', 'created_at', 'updated_at')
-    list_filter = ('status', 'first_name', 'last_name')
+    list_filter = ('status', 'created_at', 'payment_provider')
     search_fields = ('email', 'first_name', 'last_name')
     date_hierarchy = 'created_at'
     readonly_fields = ('created_at', 'updated_at', 'total_price', 'stripe_payment_intent_id')
     inlines = [OrderItemInline]
 
     fieldsets = (
-        ('Order Information', {
+        ('Информация о заказе', {
             'fields': ('user', 'first_name', 'last_name', 'email',
                        'company', 'address1', 'address2', 'city',
                        'country', 'province', 'postal_code',
                        'phone', 'special_instructions', 'total_price')
         }),
-        ('Payment and Status', {
+        ('Оплата и статус', {
             'fields': ('status', 'payment_provider', 'stripe_payment_intent_id',)
         }),
-        ('Timestamps', {
+        ('Временные метки', {
             'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
