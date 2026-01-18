@@ -197,3 +197,88 @@ python manage.py runserver
 Или:
 python3 manage.py runserver
 ```
+
+---
+
+# 💳 Stripe найстройка 
+
+Проект использует **Stripe** для обработки платежей. После клонирования репозитория необходимо выполнить следующие шаги. 
+
+--- 
+
+### 1. Создать аккаунт Stripe Если у вас ещё нет аккаунта: - Зарегистрируйтесь в Stripe - Перейдите в **Stripe Dashboard** - Убедитесь, что включён **Test mode** 
+
+
+### 2. Получить Secret API Key В **Stripe Dashboard**: - Перейдите в **Developers → API keys** - Скопируйте Secret key (начинается с sk_) Добавьте его в переменные окружения:
+
+```env
+.env:
+
+STRIPE_SECRET_KEY=your_stripe_secret_key_here
+
+settings:
+
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+```
+
+### 3. Установить и настроить Stripe CLI Проект использует **Stripe CLI** для работы с **webhooks** в локальной среде. 
+
+**Установка Stripe CLI:** 
+
+Инструкция для вашей ОС - https://stripe.com/docs/stripe-cli 
+
+**Авторизация в Stripe:**
+```
+Выполните команду:
+
+stripe login
+
+Откроется терминал/консоль для авторизации в Stripe.
+```
+
+### 4. Запуск Webhook listener **Для получения webhook-событий от Stripe выполните команду:**
+```
+payment/views.py:
+
+stripe listen --forward-to localhost:8000/payment/stripe/webhook/
+```
+
+**После запуска CLI выведет Webhook Signing Secret, например:**
+```
+your_stripe_webhook_secret_key_here
+```
+
+**Добавьте его в .env файл, а затем в settings.py:**
+```
+.env:
+
+STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret_key_here
+
+settings.py:
+
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
+```
+### В итоге у вас должно быть вот так:
+```
+settings.py:
+
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
+
+.env -> ваш ключ:
+например:
+
+STRIPE_SECRET_KEY=your_stripe_secret_key_here
+STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret_key_here
+```
+
+### 5. Запуск проекта **После настройки переменных окружения и запуска webhook listener можно запускать приложение:**
+```
+пример в терминале 
+npm run dev
+
+# или
+python manage.py runserver
+
+(используйте команду запуска, соответствующую вашему)
+```
